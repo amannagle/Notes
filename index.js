@@ -49,11 +49,21 @@ app.delete("/api/notes/:id", (request, response) => {
   response.status(204).end();
 });
 
+app.put("/api/notes/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const alteredNote = {"id":id,"content":request.body.content,"important":request.body.important}
+  console.log(alteredNote);
+  notes = notes.map(note=>note.id !== id ? note : alteredNote)
+  response.json(alteredNote);
+});
+
 const generateId = () => {
   const maxId = notes.length > 0
     ? Math.max(...notes.map(n => n.id))
     : 0
+  console.log("id would be",maxId+1);
   return maxId + 1
+  
 }
 
 app.post('/api/notes', (request, response) => {
