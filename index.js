@@ -16,18 +16,11 @@ app.get('/api/notes', (request, response) => {
   })
 })
 
-app.get("/api/notes/:id", (request, response) => {
-  const id = Number(request.params.id);
-  console.log(id);
-  const note = notes.find((note) => note.id === id);
-  if (note) {
-    console.log("went inside if");
-    response.json(note);
-  } else {
-    console.log("went inside else");
-    response.status(404).end();
-  }
-});
+app.get('/api/notes/:id', (request, response) => {
+  Note.findById(request.params.id).then(note => {
+    response.json(note)
+  })
+})
 
 app.delete("/api/notes/:id", (request, response) => {
   const id = Number(request.params.id);
@@ -62,15 +55,13 @@ app.post('/api/notes', (request, response) => {
     })
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
     important: body.important || false,
-    id: generateId(),
-  }
-
-  notes = notes.concat(note)
-
-  response.json(note)
+  })
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  })
 })
 
 const PORT = process.env.PORT || 3001
